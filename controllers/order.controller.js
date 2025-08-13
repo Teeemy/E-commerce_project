@@ -26,60 +26,17 @@ const createOrder = async (req, res) => {
     res.status(500).json({ message: "Failed to create order", error });
   }
 };
-
-// Get logged-in user's orders
+// get user's orders
 const getUserOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate({ user: req.user.id }).populate("orderItems.product")
+    const orders = await Order.find()
+      .populate({ user: req.user.id })
+      .populate("orderItems.product");
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: "Failed to get orders", error });
   }
 };
-
-// Admin: Get all orders
-const getAllOrders = async (req, res) => {
-  try {
-    const orders = await Order.find().populate("user", "name email");
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch all orders", error });
-  }
-};
-
-// Admin: Update order status
-const updateOrderStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
-    const order = await Order.findById(req.params.id);
-
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    order.status = status;
-    await order.save();
-
-    res.json({ message: "Order status updated", order });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to update order status", error });
-  }
-};
-
-// Delete an order (admin only )
-const deleteOrder = async (req, res) => {
-  try {
-    await Order.findByIdAndDelete(req.params.id);
-    res.json({ message: "Order deleted" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to delete order", error });
-  }
-};
-
 module.exports = {
-  createOrder,
-  getUserOrders,
-  getAllOrders,
-  updateOrderStatus,
-  deleteOrder,
+  createOrder,getUserOrders
 };

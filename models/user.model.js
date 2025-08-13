@@ -35,14 +35,14 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Payment_infomation"
     }],
-    ratings: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Ratings"
-    }],
-    reviews: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Reviews"
-    }],
+    // ratings: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Ratings"
+    // }],
+    // reviews: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Reviews"
+    // }],
 
 },
     { timestamps: true }

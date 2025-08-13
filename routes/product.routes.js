@@ -3,7 +3,7 @@ const router = express.Router();
 const productController = require("../controllers/product.controller");
 const adminController = require("../controllers/admin.controller");
 const upload = require("../utils/multer");
-const { uploadProduct } = require("../controllers/admin.controller");  // <-- fixed here
+const { uploadProduct } = require("../controllers/admin.controller"); 
 const authentication = require("../middleware/auth.middleware");
 const authorizeAdmin = require("../middleware/authorizeAdmin");
 

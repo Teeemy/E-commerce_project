@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -30,11 +31,16 @@ const productSchema = new mongoose.Schema({
         material: String,
     }],
     tag: [String],
-
-    images: [{
-        url:String, public_id: String
-    }],
-
+    image: {
+        public_id: {
+            type: String,
+            required: true,
+        },
+    },
+    url: {
+        type: String,
+        required: true,
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Categories",
@@ -42,27 +48,34 @@ const productSchema = new mongoose.Schema({
     brand: {
         type: String,
     },
-    currency: { 
+    currency: {
         type: String,
         default: "EUROS",
     },
     returnPolicy: {
         type: String,
     },
-    waranty: {
+    warranty: {
         type: String,
     },
-    ratings: [{
-        type: mongoose.Schema.Types.ObjectId,
+    ratings: {
+        type: Number,
         ref: "Ratings",
-    }],
-    reviews: [{
-        type: mongoose.Schema.Types.ObjectId,
+    },
+    reviews: {
+        type: String,
         ref: "Reviews",
-    }],
-},
-    { timestamps: true }
-);
-const Product = mongoose.model("Products", productSchema)
+    },
+}, { timestamps: true });
+
+// Pre-save hook to generate slug from name
+productSchema.pre("save", function (next) {
+    if (!this.slug && this.name) {
+        this.slug = slugify(this.name, { lower: true, strict: true });
+    }
+    next();
+});
+
+const Product = mongoose.model("Products", productSchema);
 
 module.exports = Product;

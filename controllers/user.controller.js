@@ -1,7 +1,8 @@
 const User = require("../models/user.model");
+const bcrypt = require("bcryptjs")
 
 const createUser = async (req, res) => {
-    const { firstName, lastName,email, password, ...others } = req.body;
+    const { firstName, lastName, email, password, ...others } = req.body;
     if (!email || !password) {
         return res.send("please provide valid email and password");
     }
@@ -23,12 +24,23 @@ const createUser = async (req, res) => {
         console.log(error.message);
         return res.send("something went wrong");
     }
-  };
-
+};
+  
+const getUserByEmail = async (req, res) => {
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.send("User not found, please provide valid email :", email)
+    }
+  } catch (error) {
+    res.send(error.message)
+    
+  }
+};
 
 const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate("address");
+    const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json(user);
@@ -45,4 +57,21 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-module.exports = { createUser,getUserProfile, getAllUsers };
+const updateUser = async (req, res) => {
+  const { id } = req.query;
+  const payload = req.body;
+  const updatedUser = await userModel.findByIdAndUpdate(
+    id,
+    { ...payload },
+    { new: true }
+  ); // expect 3 parameters but we can spread by putting (others) then include new as true
+  return res.send(updatedUser);
+};
+
+const deleteUser = async (req, res) => {
+  const { id } = req.query;
+  const deletedUser = await userModel.findByIdAndDelete(id);
+  return res.json(deletedUser);
+};
+
+module.exports = { createUser,getUserByEmail,getUserProfile,getAllUsers,updateUser,deleteUser };
