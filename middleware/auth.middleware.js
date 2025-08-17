@@ -4,7 +4,7 @@ const authentication = (req, res, next) => {
     const { token } = req.cookies;
 
     if (!token) {
-        return res.status(401).json({ message: "Access denied, Provide token" });
+        return res.status(401).json({ message: "Access denied, Not logged in" });
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (error, payload) => {

@@ -10,13 +10,14 @@ const authorizeAdmin = require("../middleware/authorizeAdmin");
 // users only
 router.get("/", productController.getAllProducts);
 router.get("/:id", productController.getProductById);
+router.get("/variant/:variantId", productController.getProductByVariantId);
+
 
 // admin only
-router.post("/", authentication, authorizeAdmin, adminController.createProduct);
 router.put("/:id", authentication, authorizeAdmin, adminController.updateProduct);
 router.delete("/:id", authentication, authorizeAdmin, adminController.deleteProduct);
 
 // Admin upload product with image
-router.post("/upload", authentication, authorizeAdmin, upload.single("image"), uploadProduct);
+router.post("/upload", authentication, authorizeAdmin, upload.array("image", 5), uploadProduct);
 
 module.exports = router;

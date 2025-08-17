@@ -6,8 +6,19 @@ const fs = require("fs/promises");
 
 const uploadProduct = async (req, res, next) => {
   try {
-    // Upload image to Cloudinary
-    const result = await cloudinary.uploader.upload(req.file.path);
+    const files = req.files; // plural
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({ message: "No images uploaded" });
+    }
+
+    // Upload all images to Cloudinary
+    const uploadResults = await Promise.all(
+      files.map((file) => cloudinary.uploader.upload(file.path))
+    );
+
+    // Clean up local files (optional)
+    await Promise.all(files.map((file) => fs.unlink(file.path)));
 
     // Parse variants if present
     let variants = [];
@@ -19,8 +30,16 @@ const uploadProduct = async (req, res, next) => {
       }
     }
 
-    const { name, description, price, category, quantity, ...others } =
-      req.body;
+    const {
+      name,
+      description,
+      price,
+      category,
+      quantity,
+      variants: _unused,
+      ...others
+    } = req.body;
+
     const slug = slugify(name, { lower: true, strict: true });
 
     // Create product then upload image
@@ -32,10 +51,11 @@ const uploadProduct = async (req, res, next) => {
       quantity,
       category,
       variants,
-      image: {
+      image: uploadResults.map((result) => ({
         public_id: result.public_id,
-      },
-      url: result.secure_url,
+        url: result.secure_url,
+      })),
+      url: uploadResults[0].secure_url, // first image as main image
       ...others,
     });
 
@@ -50,26 +70,6 @@ const uploadProduct = async (req, res, next) => {
     res
       .status(500)
       .json({ message: "Error uploading product", error: error.message });
-  }
-};
-
-const createProduct = async (req, res) => {
-  try {
-    const { name, description, price, category, image, ...others } = req.body;
-    const product = new Product({
-      name,
-      description,
-      price,
-      category,
-      image,
-      ...others,
-    });
-    const savedProduct = await product.save();
-    res.status(201).json(savedProduct);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to create product", error: error.message });
   }
 };
 
@@ -113,8 +113,7 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-
-// delete order 
+// delete order
 const deleteOrder = async (req, res) => {
   try {
     await Order.findByIdAndDelete(req.params.id);
@@ -141,7 +140,6 @@ const getSalesReport = async (req, res) => {
 
 module.exports = {
   uploadProduct,
-  createProduct,
   updateProduct,
   deleteProduct,
   getAllOrders,
