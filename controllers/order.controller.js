@@ -39,14 +39,15 @@ const createOrder = async (req, res) => {
 // get user's orders
 const getUserOrders = async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate({ user: req.user.id })
-      .populate("orderItems.product");
+    const orders = await Order.find({ user: req.user.id }) // filter by current user
+      .populate("orderItems.product"); 
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ message: "Failed to get orders", error });
+    console.error("getUserOrders error:", error);
+    res.status(500).json({ message: "Failed to get orders", error: error.message });
   }
 };
+
 module.exports = {
   createOrder,getUserOrders
 };

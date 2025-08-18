@@ -33,27 +33,27 @@ const userSchema = new mongoose.Schema(
     phoneNumber: {
       type: String,
     },
-    // address: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Addresses"
-    // }],
+    address: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Addresses"
+    }],
     gender: {
       type: String,
       enum: ["male", "female"],
       required: true,
     },
-    // paymentInfomation: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Payment_infomation"
-    // }],
-    // ratings: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Ratings"
-    // }],
-    // reviews: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Reviews"
-    // }],
+    paymentInfomation: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Payment_infomation"
+    }],
+    ratings: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Ratings"
+    }],
+    reviews: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Reviews"
+    }],
   },
   { timestamps: true }
 );

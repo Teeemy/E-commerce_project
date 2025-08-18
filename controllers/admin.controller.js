@@ -91,7 +91,7 @@ const deleteProduct = async (req, res) => {
 const getAllOrders = async (req, res) => {
   const orders = await Order.find()
     .populate("user")
-    .populate("products.product");
+    .populate("orderItems.product");
   res.json(orders);
 };
 // update order status
@@ -104,7 +104,7 @@ const updateOrderStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    order.status = status;
+    order.orderStatus = status;
     await order.save();
 
     res.json({ message: "Order status updated", order });
@@ -112,6 +112,28 @@ const updateOrderStatus = async (req, res) => {
     res.status(500).json({ message: "Failed to update order status", error });
   }
 };
+
+const markOrderAsPaid = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.paymentDetails = {
+      ...order.paymentDetails,
+      paymentStatus: "PAID",
+      paidAt: new Date()
+    };
+
+    order.orderStatus = "PROCESSING";
+
+    await order.save();
+
+    res.json({ message: "Order marked as paid", order });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating payment status", error: error.message });
+  }
+};
+
 
 // delete order
 const deleteOrder = async (req, res) => {
@@ -126,7 +148,7 @@ const deleteOrder = async (req, res) => {
 // get sales report
 const getSalesReport = async (req, res) => {
   const report = await Order.aggregate([
-    { $match: { status: "delivered" } },
+    { $match: { status: "DELIVERED" } },
     {
       $group: {
         _id: null,
@@ -144,6 +166,7 @@ module.exports = {
   deleteProduct,
   getAllOrders,
   updateOrderStatus,
+  markOrderAsPaid,
   deleteOrder,
   getSalesReport,
 };
