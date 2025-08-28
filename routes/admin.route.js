@@ -5,8 +5,6 @@ const express = require("express");
 
 const router = express.Router();
 
-// /admin/add-product => GET
-//router.get("/add-product", adminController.uploadProduct);
 
 // /admin/add-product => POST
 router.post("/add-product", adminController.createProduct);

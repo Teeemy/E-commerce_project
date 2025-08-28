@@ -64,7 +64,7 @@ const updateUser = async (req, res) => {
     id,
     { ...payload },
     { new: true }
-  ); // expect 3 parameters but we can spread by putting (others) then include new as true
+  ); 
   return res.send(updatedUser);
 };
 

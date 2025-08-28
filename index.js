@@ -20,7 +20,6 @@ const ratingRoutes = require("./routes/ratings.route");
 const app = express();
 
 // Middleware
-// Middleware
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); // for form-data and urlencoded bodies
 app.use(cookieParser());
