@@ -31,12 +31,13 @@ const productSchema = new mongoose.Schema({
         material: String,
     }],
     tag: [String],
-    image: {
-        public_id: {
-            type: String,
-            required: true,
+    image: [
+        {
+            public_id: { type: String, required: true },
+            url: { type: String, required: true },
         },
-    },
+    ],
+      
     url: {
         type: String,
         required: true,
@@ -58,14 +59,14 @@ const productSchema = new mongoose.Schema({
     warranty: {
         type: String,
     },
-    ratings: {
-        type: Number,
+    ratings: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Ratings",
-    },
-    reviews: {
-        type: String,
+    }],
+    reviews: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Reviews",
-    },
+    }],
 }, { timestamps: true });
 
 // Pre-save hook to generate slug from name
